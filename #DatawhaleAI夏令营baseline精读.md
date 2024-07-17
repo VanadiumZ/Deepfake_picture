@@ -212,3 +212,22 @@ class FFDIDataset(Dataset):
 如果 self.transform 不是 None，则应用这个变换到图像上。
 将图像标签转换为 NumPy 数组，然后转换为 PyTorch 张量。
 返回变换后的图像和标签。
+
+``` Python
+train_loader = torch.utils.data.DataLoader(
+    FFDIDataset(train_label['path'].head(1000), train_label['target'].head(1000), 
+            transforms.Compose([
+                        transforms.Resize((256, 256)),
+                        transforms.RandomHorizontalFlip(),
+                        transforms.RandomVerticalFlip(),
+                        transforms.ToTensor(),
+                        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+    ), batch_size=40, shuffle=True, num_workers=4, pin_memory=True
+)
+```
+使用 DataLoader 创建一个训练数据加载器，它将 FFDIDataset 实例作为输入，并应用了一系列变换，包括调整大小、随机水平翻转、随机垂直翻转、转换为张量以及标准化。
+只取前 1000 条记录进行训练。
+批大小为 40，数据在每个 epoch 期间会被打乱。
+使用 4 个工作进程来加载数据。
+pin_memory=True 可以加速数据传输到 GPU。
